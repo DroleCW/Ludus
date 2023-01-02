@@ -1,0 +1,21 @@
+[package]
+name = "ludus"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = ["server", "game"]
+
+[dependencies]
+
+
+
+[[bin]]
+name = "server"
+path = "src/server/bin/main.rs"
+
+[[bin]]
+name = "game"
+path = "src/game/bin/main.rs"
+
