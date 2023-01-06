@@ -14,8 +14,7 @@ async fn main() {
     println!("setting up listener");
     let listener = TcpListener::bind("127.0.0.1:2345").await.unwrap();
 
-    tokio::spawn(async move{
-        
+    tokio::spawn(async move{  
         loop{
             println!("awaiting connection");
             let (mut socket, addr) = listener.accept().await.unwrap();
