@@ -2,7 +2,7 @@ use bevy::prelude::*;
 mod states;
 use states::{game_state, main_menu_state, state_machine::AppState};
 mod connection;
-use connection as tcp;
+// use connection as tcp;
 // use std::net::TcpStream;
 // use tcp::connection::ConnectionRes;
 

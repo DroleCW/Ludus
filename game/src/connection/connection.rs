@@ -5,7 +5,7 @@ use std::str::from_utf8;
 #[derive(Resource)]
 pub struct ConnectionRes(pub Option<std::net::TcpStream>);
 
-pub fn communicate_system(mut connection: ResMut<ConnectionRes>) {
+pub fn _communicate_system(mut connection: ResMut<ConnectionRes>) {
     match &mut connection.0 {
         Some(stream) => {
             let msg = b"Hello!";
