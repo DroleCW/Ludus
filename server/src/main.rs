@@ -24,23 +24,26 @@ async fn main() {
                 let (socket_rx, mut socket_tx) = socket.split();
                 let mut socket_reader = BufReader::new(socket_rx);
                 let mut line = String::new();
-                handler.on_connect(&addr.to_string());
-
-                socket_tx.write("connected".as_bytes());
+                handler.on_connect(&addr.to_string()).await;
 
                 println!("socket setup");
                 println!("awaiting on socket");
                 while socket_reader.read_line(&mut line).await.unwrap() != 0{
-                    handler.on_message(&addr.to_string(), &line);
-                    socket_tx.write("message received".as_bytes());
+                    println!("received message {}", line);
+                    handler.on_message(&addr.to_string(), &line).await;
+                    println!("echoing");
+                    socket_tx.write(line.as_bytes()).await.unwrap();
+                    println!("echoed");
+                    line.clear();
                 }
                 println!("disconnected");
-                handler.on_disconnect(&addr.to_string());
+                handler.on_disconnect(&addr.to_string()).await;
             }); 
         }
     });
 
     while let Some((event, tx)) = rx.recv().await {
+        println!("splitting {}", event);
         let parts: Vec<&str> = event.split(":").collect();
         let event_type = parts[0];
         let address = parts[1];
@@ -53,7 +56,7 @@ async fn main() {
                 println!("Client disconnected: {}", address);
             }
             "message" => {
-                let message = parts[2];
+                let message = parts[3];
                 println!("Received message from {}: {}", address, message);
             }
             _ => {

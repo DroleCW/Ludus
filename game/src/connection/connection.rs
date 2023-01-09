@@ -8,20 +8,17 @@ pub struct ConnectionRes(pub Option<std::net::TcpStream>);
 pub fn communicate_system(mut connection: ResMut<ConnectionRes>) {
     match &mut connection.0 {
         Some(stream) => {
-            let msg = b"Hello!";
-
+            println!("reading");
+            let mut data = [0; 64];
+            let msg = b"olaaa\n";
+            println!("Sending Hello");
             stream.write(msg).unwrap();
-            println!("Sent Hello, awaiting reply...");
-
-            let mut data = [0 as u8; 6]; // using 6 byte buffer
-            match stream.read_exact(&mut data) {
+            println!("Sent olaaa, awaiting reply...");
+            
+            match stream.read(&mut data) {
                 Ok(_) => {
-                    if &data == msg {
-                        println!("Reply is ok!");
-                    } else {
-                        let text = from_utf8(&data).unwrap();
-                        println!("Unexpected reply: {}", text);
-                    }
+                    let text = from_utf8(&data).unwrap();
+                    println!("Reply: {}", text);
                 }
                 Err(e) => {
                     println!("Failed to receive data: {}", e);
