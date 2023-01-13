@@ -10,7 +10,7 @@ const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
 
 pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let button_entity = commands
+    /* let button_entity = commands
         .spawn(NodeBundle {
             style: Style {
                 // center button
@@ -47,7 +47,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                 });
         })
         .id();
-    commands.insert_resource(MenuData { button_entity });
+    commands.insert_resource(MenuData { button_entity }); */
 }
 
 pub fn menu(
