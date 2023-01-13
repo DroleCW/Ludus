@@ -10,7 +10,7 @@ pub fn communicate_system(mut connection: ResMut<ConnectionRes>) {
         Some(stream) => {
             println!("reading");
             let mut data = [0; 64];
-            let msg = b"olaaa\n";
+            let msg = b"{\"username\": \"diogodsg\", \"action\": \"join\"}\n";
             println!("Sending Hello");
             stream.write(msg).unwrap();
             println!("Sent olaaa, awaiting reply...");
