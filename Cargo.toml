@@ -7,8 +7,6 @@ edition = "2021"
 [workspace]
 members = ["server", "game"]
 
-[dependencies]
-
 
 
 [[bin]]

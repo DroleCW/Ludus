@@ -1,8 +1,8 @@
-use bevy::prelude::*;
-mod states;
-use states::{game_state, main_menu_state, state_machine::AppState};
+use bevy::{prelude::*, window::PresentMode};
 mod connection;
+mod core;
 
+use crate::core::states::{game_state, main_menu_state, state_machine::AppState};
 use connection as tcp;
 use std::net::TcpStream;
 use tcp::connection::ConnectionRes;
@@ -13,7 +13,18 @@ fn setup(mut commands: Commands) {
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(
+            (DefaultPlugins.set(WindowPlugin {
+                window: WindowDescriptor {
+                    title: "Ludus".to_string(),
+                    width: 1280.,
+                    height: 720.,
+                    present_mode: PresentMode::AutoVsync,
+                    ..default()
+                },
+                ..default()
+            })),
+        )
         .add_state(AppState::Menu)
         .insert_resource(ConnectionRes(match TcpStream::connect("localhost:2345") {
             Ok(stream) => {

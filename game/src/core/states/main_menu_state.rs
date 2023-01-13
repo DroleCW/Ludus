@@ -1,5 +1,10 @@
+#[path = "../ui/transparent-button.rs"]
+mod button;
+#[path = "../../settings/constants.rs"]
+mod constants;
 use super::state_machine::AppState;
 use bevy::prelude::*;
+use constants::{WINDOW_HEIGHT, WINDOW_WIDTH};
 #[derive(Resource)]
 pub struct MenuData {
     button_entity: Entity,
@@ -10,44 +15,32 @@ const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
 
 pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    /* let button_entity = commands
+    let button_entity = commands
         .spawn(NodeBundle {
             style: Style {
                 // center button
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
+                size: Size::new(Val::Percent(25.0), Val::Percent(50.0)),
+                justify_content: JustifyContent::FlexStart,
+                align_items: AlignItems::FlexStart,
+                flex_direction: FlexDirection::Column,
+                margin: UiRect {
+                    top: Val::Px((WINDOW_HEIGHT / 2) as f32),
+                    left: Val::Px((WINDOW_WIDTH / 16) as f32),
+                    ..default()
+                },
                 ..default()
             },
             ..default()
         })
-        .with_children(|parent| {
-            parent
-                .spawn(ButtonBundle {
-                    style: Style {
-                        size: Size::new(Val::Px(150.0), Val::Px(65.0)),
-                        // horizontally center child text
-                        justify_content: JustifyContent::Center,
-                        // vertically center child text
-                        align_items: AlignItems::Center,
-                        ..default()
-                    },
-                    background_color: NORMAL_BUTTON.into(),
-                    ..default()
-                })
-                .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section(
-                        "Play",
-                        TextStyle {
-                            font: asset_server.load("fonts\\inter.ttf"),
-                            font_size: 40.0,
-                            color: Color::rgb(0.9, 0.9, 0.9),
-                        },
-                    ));
-                });
-        })
+        .with_children(|parent| button::transparent_button(parent, &asset_server, "Join game"))
+        .with_children(|parent| button::transparent_button(parent, &asset_server, "Settings"))
+        .with_children(|parent| button::transparent_button(parent, &asset_server, "Exit"))
         .id();
-    commands.insert_resource(MenuData { button_entity }); */
+    commands.insert_resource(MenuData { button_entity });
+    commands.spawn(SpriteBundle {
+        texture: asset_server.load("textures/main-menu.png"),
+        ..default()
+    });
 }
 
 pub fn menu(
