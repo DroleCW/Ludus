@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 
 pub fn transparent_button(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>, text: &str) {
     parent
@@ -16,6 +15,12 @@ pub fn transparent_button(parent: &mut ChildBuilder, asset_server: &Res<AssetSer
                 },
                 ..default()
             },
+            background_color: BackgroundColor(Color::Rgba {
+                red: 0.0,
+                green: 0.0,
+                blue: 0.0,
+                alpha: 0.0,
+            }),
             ..default()
         })
         .with_children(|parent| {
