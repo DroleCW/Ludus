@@ -1,5 +1,5 @@
+use crate::settings::constants::colors;
 use bevy::prelude::*;
-
 pub fn transparent_button(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>, text: &str) {
     parent
         .spawn(ButtonBundle {
@@ -15,12 +15,7 @@ pub fn transparent_button(parent: &mut ChildBuilder, asset_server: &Res<AssetSer
                 },
                 ..default()
             },
-            background_color: BackgroundColor(Color::Rgba {
-                red: 0.0,
-                green: 0.0,
-                blue: 0.0,
-                alpha: 0.0,
-            }),
+            background_color: BackgroundColor(colors::TRANSPARENT),
             ..default()
         })
         .with_children(|parent| {
@@ -29,7 +24,7 @@ pub fn transparent_button(parent: &mut ChildBuilder, asset_server: &Res<AssetSer
                 TextStyle {
                     font: asset_server.load("fonts\\inter.ttf"),
                     font_size: 32.0,
-                    color: Color::rgb(0.9, 0.9, 0.9),
+                    color: colors::WHITE,
                 },
             ));
         });

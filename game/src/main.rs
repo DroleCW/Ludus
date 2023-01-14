@@ -12,7 +12,7 @@ fn setup(mut commands: Commands) {
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins.set(settings::window::window_settings())))
+        .add_plugins(DefaultPlugins.set(settings::window::window_settings()))
         .add_plugin(ConnectionPlugin)
         .add_plugin(StatePlugin)
         .add_startup_system(setup)
