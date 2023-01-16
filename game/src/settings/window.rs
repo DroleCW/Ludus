@@ -7,6 +7,7 @@ pub fn window_settings() -> bevy::prelude::WindowPlugin {
             width: constants::WINDOW_WIDTH as f32,
             height: constants::WINDOW_HEIGHT as f32,
             present_mode: PresentMode::AutoVsync,
+            resizable: false,
             ..default()
         },
         ..default()

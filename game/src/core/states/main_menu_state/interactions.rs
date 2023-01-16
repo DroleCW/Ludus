@@ -14,11 +14,20 @@ pub fn handle_join_button(connection: &mut ConnectionRes) {
     }
 }
 
+fn toogle_screen_mode(window: &mut Window) {
+    match window.mode() {
+        WindowMode::Fullscreen => window.set_mode(WindowMode::Windowed),
+        WindowMode::Windowed => window.set_mode(WindowMode::Fullscreen),
+        _ => window.set_mode(WindowMode::Windowed),
+    }
+}
+
 pub fn interactions(
     mut state: ResMut<State<AppState>>,
     mut connection: ResMut<ConnectionRes>,
     mut interaction_query: Query<(&Interaction, &Children), (Changed<Interaction>, With<Button>)>,
     mut text_query: Query<&mut Text>,
+    mut windows: ResMut<Windows>,
 ) {
     for (interaction, children) in &mut interaction_query {
         let mut text = text_query.get_mut(children[0]).unwrap();
@@ -27,13 +36,14 @@ pub fn interactions(
                 text.sections[0].style.color = colors::WHITE;
                 if text.sections[0].value == "Join game" {
                     handle_join_button(connection.as_mut());
-                    // state.set(AppState::InGame).unwrap();
+                    state.set(AppState::InGame).unwrap();
                 }
                 if text.sections[0].value == "Settings" {
-                    println!("settings")
+                    println!("toggling screen mode");
+                    toogle_screen_mode(windows.primary_mut());
                 }
                 if text.sections[0].value == "Exit" {
-                    println!("exit")
+                    println!("exit");
                 }
             }
             Interaction::Hovered => {

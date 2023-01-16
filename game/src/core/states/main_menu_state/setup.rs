@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowResized};
 
 use super::{button, layout};
 
@@ -18,6 +18,10 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     let background = commands
         .spawn(SpriteBundle {
             texture: asset_server.load("textures/main-menu.png"),
+            transform: Transform {
+                scale: (1.0, 1.0, 0.0).into(),
+                ..default()
+            },
             ..default()
         })
         .id();
@@ -25,6 +29,20 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
         menu_buttons,
         background,
     });
+}
+
+pub fn window_resized_event(
+    mut events: EventReader<WindowResized>,
+    mut background: Query<(&mut Transform, &mut Handle<Image>)>,
+) {
+    for event in events.iter() {
+        let width_scale = event.width / 1280.0;
+        let height_scale = event.height / 720.0;
+
+        for (mut transform, _) in &mut background {
+            transform.scale = (width_scale, height_scale, 1.0).into();
+        }
+    }
 }
 
 pub fn cleanup_menu(mut commands: Commands, menu_data: Res<MenuData>) {
