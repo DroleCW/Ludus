@@ -6,7 +6,10 @@ pub fn button_box() -> NodeBundle {
     NodeBundle {
         style: Style {
             // center button
-            size: Size::new(Val::Percent(25.0), Val::Percent(50.0)),
+            size: Size::new(
+                Val::Px((WINDOW_WIDTH / 4) as f32),
+                Val::Percent((WINDOW_WIDTH / 2) as f32),
+            ),
             justify_content: JustifyContent::FlexStart,
             align_items: AlignItems::FlexStart,
             flex_direction: FlexDirection::Column,

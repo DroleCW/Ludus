@@ -18,7 +18,9 @@ impl Plugin for MainMenuStatePlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(AppState::Menu).with_system(setup::setup_menu))
             .add_system_set(
-                SystemSet::on_update(AppState::Menu).with_system(interactions::interactions),
+                SystemSet::on_update(AppState::Menu)
+                    .with_system(interactions::interactions)
+                    .with_system(setup::window_resized_event),
             )
             .add_system_set(SystemSet::on_exit(AppState::Menu).with_system(setup::cleanup_menu));
     }
