@@ -1,4 +1,4 @@
-use super::communicate_system;
+use super::{send_command_system, connection_resource};
 use bevy::prelude::*;
 use std::net::TcpStream;
 
@@ -6,8 +6,8 @@ pub struct ConnectionPlugin;
 
 impl Plugin for ConnectionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(communicate_system::communicate_system)
-            .insert_resource(communicate_system::ConnectionRes(match TcpStream::connect(
+        app.add_system(send_command_system::send_command_system)
+            .insert_resource(connection_resource::ConnectionRes(match TcpStream::connect(
                 "localhost:2345",
             ) {
                 Ok(stream) => {
