@@ -1,19 +1,32 @@
 use bevy::prelude::*;
 
-use super::connection;
+use crate::connection;
 
 use tokio::sync::mpsc;
+use tokio::sync::broadcast;
 
 use serde::Deserialize;
 use serde_json::*;
 
+use crate::entities;
+
 #[derive(Resource)]
 struct EventReceiver(mpsc::Receiver<String>);
+
+#[derive(Resource)]
+struct ClientBroadcast(broadcast::Sender<String>);
 
 #[derive(Deserialize, Debug)]
 struct Command {
     username: String,
     action: String,
+    data: String
+}
+
+#[derive(Deserialize, Debug)]
+struct SpawnActionData{
+    x: f32,
+    y: f32
 }
 
 
@@ -21,13 +34,15 @@ pub struct EventProcessorPlugin;
 
 impl Plugin for EventProcessorPlugin{
     fn build(&self, app: &mut App){
-        app.insert_resource(EventReceiver(connection::connection_setup::setup_connection()))
+        let (event_receiver, client_broadcast_tx) = connection::connection_setup::setup_connection();
+        app.insert_resource(EventReceiver(event_receiver))
+        .insert_resource(ClientBroadcast(client_broadcast_tx))
         .add_system(process_event);
     }
 }
 
 
-fn process_event(mut rx: ResMut<EventReceiver>) {
+fn process_event(mut rx: ResMut<EventReceiver>, mut commands: Commands) {
     //let event = task::spawn();
     let event = rx.0.blocking_recv();
     //let event = task::
@@ -53,6 +68,11 @@ fn process_event(mut rx: ResMut<EventReceiver>) {
                     match command {
                         Ok(val) => {
                             println!("{:#?}", val);
+                            match val.action.as_str(){
+                                "spawn"=> {action_spawn(val.data, commands)},
+                                "join"=> {action_join(val.username)},
+                                _ => {}
+                            }
                         }
                         Err(_) => {
                             println!("pooped json");
@@ -66,4 +86,17 @@ fn process_event(mut rx: ResMut<EventReceiver>) {
         }
         None => {}
     }
+}
+
+fn action_spawn(data: String, mut commands: Commands){
+    let spawn_data: Result<SpawnActionData> = serde_json::from_str(data.as_str());
+    match spawn_data {
+        Ok(position) => {commands.spawn(entities::soldier::new(position.x, position.y));},
+        Err(_) => {println!("wrong spawn action data");}
+        
+    }
+}
+
+fn action_join(username: String){
+    println!("user {} joined", username)
 }

@@ -5,19 +5,18 @@ use super::connection_handler;
 use tokio::sync::mpsc;
 use tokio::sync::broadcast;
 
-pub fn setup_connection() -> mpsc::Receiver<String>{
+pub fn setup_connection() -> (mpsc::Receiver<String>, broadcast::Sender<String>){
 
     let (tx, mut rx) = mpsc::channel(16);
     let handler = connection_handler::ConnectionHandler { tx };
-    let (client_broadcast_tx, mut client_broadcast_rx) = broadcast::channel(16);
-    let thread_broadcast_tx = client_broadcast_tx.clone();
-
+    let (client_broadcast_tx, _) = broadcast::channel(16);
+    let thread_broadcast_tx: broadcast::Sender<String> = client_broadcast_tx.clone();
     let thread_handle = thread::spawn(move || {
         tokio::runtime::Builder::new_multi_thread()
             .enable_all()
             .build()
             .unwrap()
-            .block_on(async {
+            .block_on(/* async {
                 println!("setting up listener");
                 let listener = TcpListener::bind("127.0.0.1:2345").await.unwrap();
                 loop {
@@ -61,7 +60,7 @@ pub fn setup_connection() -> mpsc::Receiver<String>{
                         loop{
                             match new_broadcast_receiver.recv().await{
                                 Ok(message) => {
-                                    match socket_tx.write(message).await{
+                                    match socket_tx.write(message.as_bytes()).await{
                                         Ok(bytes) => {if bytes == 0{println!("could not send message to client, closing connection"); break;}}
                                         Err(_) => {println!("error sending message to client, closing connection"); break;}
                                     }
@@ -72,7 +71,7 @@ pub fn setup_connection() -> mpsc::Receiver<String>{
                         }
                     });
                 }
-            });
+            } */connection_handler::await_connection(thread_broadcast_tx, handler));
     });
-    rx
+    (rx, client_broadcast_tx)
 }

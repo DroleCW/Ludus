@@ -6,12 +6,9 @@ use crate::core::states::state_machine::AppState;
 
 pub fn handle_join_button(connection: &mut ConnectionRes) {
     println!("join game");
-    let msg = b"{\"username\": \"diogodsg\", \"action\": \"join\"}\n";
+    let msg = b"{\"username\": \"diogodsg\", \"action\": \"join\", \"data\": \"aa\"}\n";
 
-    match send(connection, msg) {
-        Ok(_) => println!("safe"),
-        Err(_) => println!("nhe"),
-    }
+    send(connection, msg);
 }
 
 fn toogle_screen_mode(window: &mut Window) {

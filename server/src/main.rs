@@ -1,4 +1,6 @@
 mod events;
+mod entities;
+mod connection;
 
 use bevy::prelude::*;
 
