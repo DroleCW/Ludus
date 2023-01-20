@@ -1,12 +1,15 @@
 use bevy::prelude::*;
 
+use super::unit;
+
 #[derive(Component)]
 pub struct Soldier();
 
-pub fn new(x: f32, y: f32) -> (Transform, Soldier){
+pub fn new(x: f32, y: f32, owner: String) -> (Transform, Soldier, unit::Unit){
     (
         Transform::from_xyz(x, y, 0.0),
-        Soldier()
+        Soldier(),
+        unit::Unit{unit_type: "soldier".to_string(), unit_owner: owner}
     )
 }
 
