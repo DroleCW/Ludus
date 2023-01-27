@@ -36,7 +36,8 @@ struct SpawnActionData{
 }
 
 struct Player{
-    username: String
+    username: String,
+    address: String
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -119,6 +120,7 @@ fn process_event(mut rx: ResMut<EventReceiver>, mut commands: Commands, mut play
                 }
                 "disconnect" => {
                     println!("Client disconnected: {}", address);
+                    disconnect_player(address, player_list_resource);
                 }
                 "message" => {
                     let message = parts[2];
@@ -129,7 +131,7 @@ fn process_event(mut rx: ResMut<EventReceiver>, mut commands: Commands, mut play
                             println!("{:#?}", val);
                             match val.action.as_str(){
                                 "spawn"=> {action_spawn(val.data, val.username, commands)},
-                                "join"=> {action_join(val.username, player_list_resource)},
+                                "join"=> {action_join(val.username, address.to_string(), player_list_resource)},
                                 _ => {}
                             }
                         }
@@ -156,7 +158,11 @@ fn action_spawn(data: String, username: String, mut commands: Commands){
     }
 }
 
-fn action_join(username: String, mut player_list_resource: ResMut<PlayerList>){
+fn action_join(username: String, address: String, mut player_list_resource: ResMut<PlayerList>){
     println!("user {} joined", username);
-    player_list_resource.0.push(Player{username: username});
+    player_list_resource.0.push(Player{username: username, address: address});
+}
+
+fn disconnect_player(address: &str, mut player_list_resource: ResMut<PlayerList>){
+    player_list_resource.0.retain(|player| *player.address != *address);
 }
