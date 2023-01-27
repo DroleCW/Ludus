@@ -26,8 +26,13 @@ struct ClientBroadcast(broadcast::Sender<String>);
 #[derive(Deserialize, Debug)]
 struct Command {
     username: String,
-    action: String,
-    data: String,
+    action: Action,
+}
+
+#[derive(Deserialize, Debug)]
+enum Action{
+    Join(),
+    Spawn(SpawnActionData)
 }
 
 #[derive(Deserialize, Debug)]
@@ -155,9 +160,9 @@ fn process_event(
                     match command {
                         Ok(val) => {
                             println!("{:#?}", val);
-                            match val.action.as_str(){
-                                "spawn"=> {action_spawn(val.data, val.username, commands)},
-                                "join"=> {action_join(val.username, address.to_string(), player_list_resource)},
+                            match val.action{
+                                Action::Spawn(data)=> {action_spawn(data, val.username, commands)},
+                                Action::Join()=> {action_join(val.username, address.to_string(), player_list_resource)},
                                 _ => {}
                             }
                         }
@@ -175,21 +180,16 @@ fn process_event(
     }
 }
 
-fn action_spawn(data: String, username: String, mut commands: Commands) {
-    let spawn_data: Result<SpawnActionData> = serde_json::from_str(data.as_str());
+fn action_spawn(data: SpawnActionData, username: String, mut commands: Commands) {
     println!("Spawning");
-    match spawn_data {
-        Ok(spawn_data) => {
-            commands.spawn(entities::soldier::new(
-                spawn_data.position.x,
-                spawn_data.position.y,
-                username,
-            ));
-        }
-        Err(_) => {
-            println!("wrong spawn action data");
-        }
-    }
+
+    commands.spawn(entities::soldier::new(
+        data.position.x,
+        data.position.y,
+        username,
+    ));
+
+    
 }
 
 fn action_join(username: String, address: String, mut player_list_resource: ResMut<PlayerList>){

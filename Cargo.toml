@@ -17,3 +17,6 @@ path = "src/server/bin/main.rs"
 name = "game"
 path = "src/game/bin/main.rs"
 
+[dependencies]
+serde_with = "2.2.0"
+
