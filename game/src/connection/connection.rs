@@ -1,8 +1,14 @@
 use super::send;
 use bevy::prelude::*;
 use std::net::TcpStream;
-
 pub struct ConnectionPlugin;
+use serde::Serialize;
+#[derive(Serialize, Debug)]
+pub struct ConnectionEvent<T> {
+    pub username: String,
+    pub action: String,
+    pub data: T,
+}
 
 impl Plugin for ConnectionPlugin {
     fn build(&self, app: &mut App) {
