@@ -1,13 +1,10 @@
 mod connection;
 mod core;
 mod settings;
-use bevy::input::keyboard::KeyCode;
 
 use crate::core::states::state_machine::StatePlugin;
 use bevy::prelude::*;
 use connection::connection::ConnectionPlugin;
-
-
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());

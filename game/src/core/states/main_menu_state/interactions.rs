@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 
 use super::constants::colors;
-use crate::connection::send::{send, ConnectionRes};
+use crate::connection::connection_resource::ConnectionRes;
+use crate::connection::send::send;
+
 use crate::core::states::state_machine::AppState;
 
 pub fn handle_join_button(connection: &mut ConnectionRes) {

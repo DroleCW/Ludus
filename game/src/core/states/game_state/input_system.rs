@@ -1,7 +1,7 @@
-use crate::connection::send::{send, ConnectionRes};
+use crate::connection::connection_resource::ConnectionRes;
+use crate::connection::send::send;
 use bevy::prelude::*;
 use serde::Serialize;
-
 
 #[derive(Serialize, Debug)]
 struct Position {
@@ -15,9 +15,9 @@ pub struct SpawnActionData {
 }
 
 #[derive(Serialize, Debug)]
-pub enum Action{
+pub enum Action {
     Join(),
-    Spawn(SpawnActionData)
+    Spawn(SpawnActionData),
 }
 
 #[derive(Serialize, Debug)]
@@ -36,22 +36,10 @@ pub fn mouse_button_input(buttons: Res<Input<MouseButton>>, mut connection: ResM
             action: Action::Spawn(action_data),
         };
 
-        // let msg = b"{\"username\": \"diogodsg\", \"action\": \"spawn\", \"data\": \"aa\"}\n";
         let mut stringified_action = serde_json::to_string(&spawn_action).unwrap();
         stringified_action.push('\n');
-        // let a = b"{\"username\":\"diogodsg\",\"action\":\"spawn\",\"data\":{\"position\":{\"x\":2.0,\"y\":2.0}}}";
-        let msg =
-            b"{\"username\":\"diogodsg\",\"action\":{\"Spawn\":{\"position\":{\"x\":2.0,\"y\":2.0}}}}\n";
 
         println!("string is: {}", stringified_action);
         send(connection.as_mut(), stringified_action.as_bytes());
-
-        // match stringified_action {
-        //     Ok(stream) => {
-        //         println!("{}", stream);
-        //         send(connection.as_mut(), msg);
-        //     }
-        //     Err(_) => println!("failed to send spawn troop event"),
-        // }
     }
 }
