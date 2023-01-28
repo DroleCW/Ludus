@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::connection::entity_manager::EntityManager;
+
 use super::follower::Folower;
 
 pub fn move_system(mut folowers: Query<&mut Transform, With<Folower>>, window: Res<Windows>) {

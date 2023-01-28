@@ -1,11 +1,12 @@
 use super::connection_resource::ConnectionRes;
+use super::entity_manager::EntityManager;
 use bevy::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::*;
 use std::io::Read;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub struct Position {
     pub x: f32,
     pub y: f32,
@@ -17,29 +18,32 @@ pub struct Unit {
     pub unit_owner: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UnitReport {
     pub unit_type: String,
     pub unit_owner: String,
     pub position: Position,
 }
 
-struct Player {
+pub struct Player {
     username: String,
     address: String,
 }
 
-#[derive(Deserialize, Debug)]
-struct PlayerReport {
-    username: String,
+#[derive(Deserialize, Debug, Clone)]
+pub struct PlayerReport {
+    pub username: String,
 }
 
-#[derive(Deserialize, Debug)]
-struct ServerReport {
-    players: Vec<PlayerReport>,
-    units: Vec<UnitReport>,
+#[derive(Deserialize, Debug, Clone)]
+pub struct ServerReport {
+    pub players: Vec<PlayerReport>,
+    pub units: Vec<UnitReport>,
 }
-pub fn receive_command_system(mut connection: ResMut<ConnectionRes>) {
+pub fn receive_command_system(
+    mut connection: ResMut<ConnectionRes>,
+    mut entity_manager: ResMut<EntityManager>,
+) {
     match &mut connection.0 {
         Some(stream) => {
             let mut buffer = [0; 1024];
@@ -49,7 +53,9 @@ pub fn receive_command_system(mut connection: ResMut<ConnectionRes>) {
 
             let result: Result<ServerReport> = serde_json::from_str(parts[0]);
             match result {
-                Ok(rep) => println!("{:?}", rep),
+                Ok(rep) => {
+                    entity_manager.state = rep;
+                }
                 Err(err) => println!("{:?}", err),
             }
         }

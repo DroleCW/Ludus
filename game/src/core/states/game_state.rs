@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+pub mod entity_manager;
 pub mod follower;
 pub mod input_system;
 pub mod move_system;
@@ -14,7 +15,8 @@ impl Plugin for GameStatePlugin {
             .add_system_set(
                 SystemSet::on_update(AppState::InGame)
                     .with_system(move_system::move_system)
-                    .with_system(input_system::mouse_button_input),
+                    .with_system(input_system::mouse_button_input)
+                    .with_system(entity_manager::entity_manager_system),
             )
             .add_system(bevy::window::close_on_esc);
     }
