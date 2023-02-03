@@ -26,20 +26,28 @@ pub struct ConnectionEvent {
     pub action: Action,
 }
 
-pub fn mouse_button_input(buttons: Res<Input<MouseButton>>, mut connection: ResMut<ConnectionRes>) {
+pub fn mouse_button_input(
+    buttons: Res<Input<MouseButton>>,
+    windows: Res<Windows>,
+    mut connection: ResMut<ConnectionRes>,
+) {
     if buttons.just_released(MouseButton::Left) {
-        let action_data = SpawnActionData {
-            position: Position { x: 2.0, y: 2.0 },
-        };
-        let spawn_action = ConnectionEvent {
-            username: "diogodsg".to_string(),
-            action: Action::Spawn(action_data),
-        };
+        let window = windows.get_primary().unwrap();
 
-        let mut stringified_action = serde_json::to_string(&spawn_action).unwrap();
-        stringified_action.push('\n');
+        if let Some(pos) = window.cursor_position() {
+            let action_data = SpawnActionData {
+                position: Position { x: pos.x, y: pos.y },
+            };
+            let spawn_action = ConnectionEvent {
+                username: "diogodsg".to_string(),
+                action: Action::Spawn(action_data),
+            };
 
-        println!("string is: {}", stringified_action);
-        send(connection.as_mut(), stringified_action.as_bytes());
+            let mut stringified_action = serde_json::to_string(&spawn_action).unwrap();
+            stringified_action.push('\n');
+
+            println!("string is: {}", stringified_action);
+            send(connection.as_mut(), stringified_action.as_bytes());
+        }
     }
 }

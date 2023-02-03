@@ -20,6 +20,7 @@ pub struct Unit {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UnitReport {
+    pub id: String,
     pub unit_type: String,
     pub unit_owner: String,
     pub position: Position,

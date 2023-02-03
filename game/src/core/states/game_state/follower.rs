@@ -1,4 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(Component)]
-pub struct Folower();
+#[derive(Component, Debug)]
+pub struct Folower {
+    pub id: String,
+}

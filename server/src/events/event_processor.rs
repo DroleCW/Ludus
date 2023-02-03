@@ -1,4 +1,5 @@
 use std::thread::spawn;
+use uuid::Uuid;
 
 use bevy::prelude::*;
 use bevy::time::FixedTimestep;
@@ -30,9 +31,9 @@ struct Command {
 }
 
 #[derive(Deserialize, Debug)]
-enum Action{
+enum Action {
     Join(),
-    Spawn(SpawnActionData)
+    Spawn(SpawnActionData),
 }
 
 #[derive(Deserialize, Debug)]
@@ -40,9 +41,9 @@ struct SpawnActionData {
     position: unit::Position,
 }
 
-struct Player{
+struct Player {
     username: String,
-    address: String
+    address: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -91,6 +92,7 @@ fn client_broadcast(
             y: transform.translation.y,
         };
         let new_unit_report = unit::UnitReport {
+            id: unit.id.as_str(),
             unit_type: unit.unit_type.as_str(),
             unit_owner: unit.unit_owner.as_str(),
             position: pos,
@@ -134,9 +136,7 @@ fn process_event(
     mut commands: Commands,
     mut player_list_resource: ResMut<PlayerList>,
 ) {
-    //let event = task::spawn();
     let event = rx.0.try_recv();
-    //let event = task::
 
     match event {
         Ok(event) => {
@@ -160,9 +160,13 @@ fn process_event(
                     match command {
                         Ok(val) => {
                             println!("{:#?}", val);
-                            match val.action{
-                                Action::Spawn(data)=> {action_spawn(data, val.username, commands)},
-                                Action::Join()=> {action_join(val.username, address.to_string(), player_list_resource)},
+                            match val.action {
+                                Action::Spawn(data) => action_spawn(data, val.username, commands),
+                                Action::Join() => action_join(
+                                    val.username,
+                                    address.to_string(),
+                                    player_list_resource,
+                                ),
                                 _ => {}
                             }
                         }
@@ -181,22 +185,23 @@ fn process_event(
 }
 
 fn action_spawn(data: SpawnActionData, username: String, mut commands: Commands) {
-    println!("Spawning");
-
     commands.spawn(entities::soldier::new(
         data.position.x,
         data.position.y,
         username,
     ));
-
-    
 }
 
-fn action_join(username: String, address: String, mut player_list_resource: ResMut<PlayerList>){
+fn action_join(username: String, address: String, mut player_list_resource: ResMut<PlayerList>) {
     println!("user {} joined", username);
-    player_list_resource.0.push(Player{username: username, address: address});
+    player_list_resource.0.push(Player {
+        username: username,
+        address: address,
+    });
 }
 
-fn disconnect_player(address: &str, mut player_list_resource: ResMut<PlayerList>){
-    player_list_resource.0.retain(|player| *player.address != *address);
+fn disconnect_player(address: &str, mut player_list_resource: ResMut<PlayerList>) {
+    player_list_resource
+        .0
+        .retain(|player| *player.address != *address);
 }
